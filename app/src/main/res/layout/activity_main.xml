@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/fragmentFrame"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/vaadTabs"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone">
+
+            <com.google.android.material.tabs.TabItem
+                android:id="@+id/passwordChangeVaad"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Change Password" />
+
+            <com.google.android.material.tabs.TabItem
+                android:id="@+id/vaadPayments"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Payments" />
+
+            <com.google.android.material.tabs.TabItem
+                android:id="@+id/paymentSummary"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Payment Summary" />
+
+        </com.google.android.material.tabs.TabLayout>
+
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/residentTabs"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="visible">
+
+            <com.google.android.material.tabs.TabItem
+                android:id="@+id/passwordChange"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Change Password" />
+
+            <com.google.android.material.tabs.TabItem
+                android:id="@+id/residentPayments"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Payments" />
+
+        </com.google.android.material.tabs.TabLayout>
+    </androidx.viewpager.widget.ViewPager>
+
+</LinearLayout>
