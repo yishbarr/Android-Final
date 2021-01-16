@@ -30,8 +30,8 @@
         android:inputType="textPassword" />
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:orientation="horizontal">
 
         <Button
@@ -50,5 +50,24 @@
             android:onClick="Register"
             android:text="Register" />
     </LinearLayout>
+
+    <Button
+        android:id="@+id/forgot"
+        android:layout_width="196dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="60dp"
+        android:layout_weight="0"
+        android:onClick="resetPassword"
+        android:text="Forgot Password" />
+
+    <TextView
+        android:id="@+id/loginMessage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="60dp"
+        android:layout_marginRight="60dp"
+        android:layout_weight="0"
+        android:textColor="@color/white"
+        android:visibility="invisible" />
 
 </LinearLayout>

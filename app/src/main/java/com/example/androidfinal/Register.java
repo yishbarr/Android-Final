@@ -2,6 +2,7 @@ package com.example.androidfinal;
 
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.RadioButton;
@@ -32,6 +33,7 @@ public class Register extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private FirebaseDatabase database;
     private boolean isVaad;
+    private TextView error;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +45,7 @@ public class Register extends AppCompatActivity {
         //Database
         database = FirebaseDatabase.getInstance();
         isVaad = true;
+        error = findViewById(R.id.errorMessage);
     }
 
     //Select Vaad or Resident
@@ -94,7 +97,6 @@ public class Register extends AppCompatActivity {
                 seniority = 0;
             }
 
-            final boolean[] error1 = new boolean[1];
 
             // Check if flat number exists already
             DatabaseReference myRef = database.getReference("users");
@@ -109,20 +111,14 @@ public class Register extends AppCompatActivity {
                     userArray = dataSnapshot.getChildren();
                     for (DataSnapshot user : userArray) {
                         //If it's a vaad
-                        try {
-
-                            if (user.child("userType").getValue(String.class).contentEquals("resident")) {
-                                if (user.child("addressNumber").getValue(Long.class).intValue() == finalAddressNumber) {
-                                    throw new Exception("Flat number already registered.");
-                                } else if (user.child("id").getValue(Long.class).intValue() == id) {
-                                    throw new Exception("ID already taken.");
-                                }
+                        if (user.child("userType").getValue(String.class).contentEquals("resident")) {
+                            if (user.child("addressNumber").getValue(Long.class).intValue() == finalAddressNumber) {
+                                errorMessage("Flat number already registered.");
+                                return;
+                            } else if (user.child("id").getValue(Long.class).intValue() == id) {
+                                errorMessage("ID already taken.");
+                                return;
                             }
-                        } catch (Exception e) {
-                            TextView error = findViewById(R.id.errorMessage);
-                            error.setText(e.getMessage());
-                            error.setVisibility(View.VISIBLE);
-                            return;
                         }
                     }
                     auth(username, password, firstName, surname, id, finalSeniority, finalAddressNumber);
@@ -131,23 +127,19 @@ public class Register extends AppCompatActivity {
                 @Override
                 public void onCancelled(DatabaseError error) {
                     // Failed to read value
-                    error1[0] = true;
+                    errorMessage("Couldn't connect. Please check your connection.");
                 }
             });
-            if (error1[0])
-                throw new ConnectTimeoutException("Couldn't connect. Please check your connection.");
         } catch (NumberFormatException e) {
-            TextView error = findViewById(R.id.errorMessage);
-            error.setText("Please check validity of fields.");
-            error.setVisibility(View.VISIBLE);
-            return;
-        } catch (ConnectTimeoutException e) {
-            TextView error = findViewById(R.id.errorMessage);
-            error.setText(e.getMessage());
-            error.setVisibility(View.VISIBLE);
-            return;
+            errorMessage("Please check validity of fields.");
         }
 
+    }
+
+    private void errorMessage(String errorMessage) {
+        error.setVisibility(View.VISIBLE);
+        error.setTextColor(Color.RED);
+        error.setText(errorMessage);
     }
 
     private void auth(String username, String password, String firstName, String surname,
@@ -173,8 +165,7 @@ public class Register extends AppCompatActivity {
                             startActivity(intent);
                         } else {
                             // If sign in fails, display a message to the user.
-                            Toast.makeText(Register.this, "Registration failed.",
-                                    Toast.LENGTH_SHORT).show();
+                            errorMessage("Registration failed.");
                         }
                         // ...
                     }

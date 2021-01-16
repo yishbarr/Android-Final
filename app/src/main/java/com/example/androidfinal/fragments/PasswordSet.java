@@ -1,14 +1,24 @@
 package com.example.androidfinal.fragments;
 
+import android.graphics.Color;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.example.androidfinal.R;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.EmailAuthProvider;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -16,6 +26,10 @@ import com.example.androidfinal.R;
  * create an instance of this fragment.
  */
 public class PasswordSet extends Fragment {
+
+    private static TextView message;
+    private static TextView passwordText;
+    private static FirebaseUser user;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -62,5 +76,43 @@ public class PasswordSet extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_password_set, container, false);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        message = view.findViewById(R.id.passwordChangedMessage);
+        passwordText = view.findViewById(R.id.passwordSet);
+    }
+
+    private static void errorMessage(String errorMessage) {
+        message.setVisibility(View.VISIBLE);
+        message.setTextColor(Color.RED);
+        message.setText(errorMessage);
+    }
+
+    public static void ChangePassword(View view) {
+        try {
+            user = FirebaseAuth.getInstance().getCurrentUser();
+            String password = passwordText.getText().toString();
+
+            user.updatePassword(password)
+                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            message.setVisibility(View.VISIBLE);
+                            if (task.isSuccessful()) {
+                                message.setTextColor(Color.WHITE);
+                                message.setText("Password Changed");
+                            } else {
+                                errorMessage("Failed to change password.");
+                            }
+                        }
+                    });
+        } catch (Exception e) {
+            errorMessage("Failed to change password.");
+        }
+
+
     }
 }

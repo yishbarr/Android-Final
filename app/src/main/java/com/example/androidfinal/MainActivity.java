@@ -2,6 +2,7 @@ package com.example.androidfinal;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
@@ -12,13 +13,18 @@ import androidx.viewpager.widget.ViewPager;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 
+import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.TextView;
 
 import com.example.androidfinal.fragments.PasswordSet;
 import com.example.androidfinal.fragments.PaymentSummary;
 import com.example.androidfinal.fragments.ResidentPayments;
 import com.example.androidfinal.fragments.VaadPayments;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 import com.google.firebase.auth.FirebaseAuth;
@@ -29,6 +35,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+
 public class MainActivity extends AppCompatActivity {
 
     private FragmentManager frags;
@@ -38,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
     private ViewPager viewPager;
     private boolean isVaad;
     private FragmentStatePagerAdapter pagerAdapter;
+    private ArrayList<LinkedHashMap<String, Long>> allPayments = new ArrayList<>();
 
     @Override
 
@@ -53,19 +64,37 @@ public class MainActivity extends AppCompatActivity {
         //Check if user is Vaad or Resident
         user = FirebaseAuth.getInstance().getCurrentUser();
         database = FirebaseDatabase.getInstance();
-        myRef = database.getReference("users").child(user.getUid()).child("userType");
+        myRef = database.getReference("users");
 
         // Read from the database
         myRef.addValueEventListener(new ValueEventListener() {
+            @RequiresApi(api = Build.VERSION_CODES.N)
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 // This method is called once with the initial value and again
                 // whenever data at this location is updated.
-                String value = dataSnapshot.getValue(String.class);
+                String value = dataSnapshot.child(user.getUid()).child("userType").getValue(String.class);
                 if (value.contentEquals("vaad")) {
                     isVaad = true;
                 }
                 createTabs();
+                //Get payment info from database.
+                /*if (isVaad) {
+                    dataSnapshot.getChildren().forEach(user -> {
+                        LinkedHashMap<String, Long> payments = new LinkedHashMap<>();
+                        user.child("monthlyPayments").getChildren().forEach(month -> {
+                            payments.put(month.getKey(), month.getValue(Long.class));
+                        });
+                        allPayments.add(payments);
+                    });
+                } else {
+                    LinkedHashMap<String, Long> payments = new LinkedHashMap<>();
+                    dataSnapshot.child(user.getUid()).child("monthlyPayments").getChildren().forEach(month -> {
+                        payments.put(month.getKey(), month.getValue(Long.class));
+                    });
+                    allPayments.add(payments);
+                }
+                addInfoToFragments();*/
             }
 
             @Override
@@ -74,6 +103,10 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+
+    }
+
+    private void addInfoToFragments() {
 
     }
 
@@ -114,48 +147,10 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    //Change fragment by button
-    /*private void changeFragment(int id) {
-        FragmentTransaction transaction = frags.beginTransaction();
-        switch (id) {
-            case 0: {
-                transaction.add(R.id.fragmentFrame, new PasswordSet()).commit();
-            }
-            break;
-            case 1: {
-                if (isVaad)
-                    transaction.add(R.id.fragmentFrame, new ResidentPayments()).commit();
-                else
-                    transaction.add(R.id.fragmentFrame, new VaadPayments()).commit();
-            }
-            break;
-            case 2: {
-                transaction.add(R.id.fragmentFrame, new ResidentPayments()).commit();
-            }
-            break;
-        }
-    }*/
+    public void ChangePassword(View view) {
+        PasswordSet.ChangePassword(view);
+    }
 
-    /*private void database() {
-        myRef = database.getReference("users").child(user.getUid()).child("monthlyPayments");
-        HashMap<String, Long> payments = new HashMap<>();
-        // Read from the database
-        myRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                // This method is called once with the initial value and again
-                // whenever data at this location is updated.
-                dataSnapshot.getChildren().forEach((month) -> {
-                    payments.put(month.getKey(), month.getValue(Long.class))
-                });
-            }
-
-            @Override
-            public void onCancelled(DatabaseError error) {
-                // Failed to read value
-            }
-        });
-    }*/
 }
 
 class ViewPagerAdapter extends FragmentStatePagerAdapter {
