@@ -9,13 +9,14 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 
+import com.example.androidfinal.interfaces.Authentication;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-public class Login extends AppCompatActivity {
+public class Login extends AppCompatActivity implements Authentication {
     private FirebaseAuth mAuth;
     private TextView message;
 
@@ -52,7 +53,7 @@ public class Login extends AppCompatActivity {
                                         startActivity(intent);
                                     } else {
                                         // If sign in fails, display a message to the user.
-                                        errorMessage("Login credentials incorrect.");
+                                        errorMessage("Failed to log in. Check your connection or your credentials.");
                                     }
                                 }
                                 // ...
@@ -62,14 +63,14 @@ public class Login extends AppCompatActivity {
 
 
         } catch (IllegalArgumentException e) {
-            errorMessage("Login credentials incorrect.");
+            errorMessage("Login credentials invalid.");
         } catch (Exception e) {
             errorMessage(e.getMessage());
         }
 
     }
 
-    private void errorMessage(String errorMessage) {
+    public void errorMessage(String errorMessage) {
         message.setVisibility(View.VISIBLE);
         message.setTextColor(Color.RED);
         message.setText(errorMessage);

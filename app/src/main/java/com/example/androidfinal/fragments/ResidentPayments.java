@@ -1,12 +1,16 @@
 package com.example.androidfinal.fragments;
 
 import android.content.Context;
+import android.content.res.Resources;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,6 +30,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.time.Month;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -33,6 +39,12 @@ import java.time.Month;
  * create an instance of this fragment.
  */
 public class ResidentPayments extends Fragment {
+
+    private ArrayList<LinkedHashMap<String, Long>> allPayments = new ArrayList<>();
+    private FirebaseDatabase database;
+    private DatabaseReference myRef;
+    private FirebaseUser user;
+
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -86,7 +98,74 @@ public class ResidentPayments extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        user = FirebaseAuth.getInstance().getCurrentUser();
+        database = FirebaseDatabase.getInstance();
+        myRef = database.getReference("users");
+        //Read from database.
+        myRef.addValueEventListener(new ValueEventListener() {
+            @RequiresApi(api = Build.VERSION_CODES.N)
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                // This method is called once with the initial value and again
+                // whenever data at this location is updated.
 
+                //Get payment info from database.
+                if (MainActivity.isVaad()) {
+                    dataSnapshot.getChildren().forEach(user -> {
+                        LinkedHashMap<String, Long> payments = new LinkedHashMap<>();
+                        user.child("monthlyPayments").getChildren().forEach(month -> {
+                            payments.put(month.getKey(), month.getValue(Long.class));
+                        });
+                        allPayments.add(payments);
+                    });
+                } else {
+                    LinkedHashMap<String, Long> payments = new LinkedHashMap<>();
+                    dataSnapshot.child(user.getUid()).child("monthlyPayments").getChildren().forEach(month -> {
+                        payments.put(month.getKey(), month.getValue(Long.class));
+                    });
+                    allPayments.add(payments);
+                    addInfoToResidentPayments(allPayments);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                // Failed to read value
+            }
+        });
+    }
+
+    //Put payments in
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    public void addInfoToResidentPayments(ArrayList<LinkedHashMap<String, Long>> allPayments) {
+        View view = this.getView();
+        TableLayout table = view.findViewById(R.id.table);
+        allPayments.forEach(paymentList -> {
+            paymentList.entrySet().stream().forEach(entry -> {
+                TableRow row = new TableRow(this.getContext());
+                TextView key = new TextView(this.getContext());
+                key.setText(entry.getKey());
+                key.setTextSize(24);
+                TextView value = new TextView(this.getContext());
+                value.setText(entry.getValue() + "");
+                value.setTextSize(24);
+                row.addView(key);
+                row.addView(value);
+
+                int dip = 30;
+                Resources r = getResources();
+                int px = (int) TypedValue.applyDimension(
+                        TypedValue.COMPLEX_UNIT_DIP,
+                        dip,
+                        r.getDisplayMetrics()
+                );
+                ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) value.getLayoutParams();
+                params.setMargins(px, 0, 0, 0);
+                value.setLayoutParams(params);
+
+                table.addView(row);
+            });
+        });
     }
 }
 

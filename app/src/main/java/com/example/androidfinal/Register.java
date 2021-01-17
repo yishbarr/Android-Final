@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.RadioButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -15,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.androidfinal.classes.Resident;
 import com.example.androidfinal.classes.User;
 import com.example.androidfinal.classes.Vaad;
+import com.example.androidfinal.interfaces.Authentication;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -26,10 +26,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import org.apache.http.conn.ConnectTimeoutException;
 
-
-public class Register extends AppCompatActivity {
+public class Register extends AppCompatActivity implements Authentication {
     private FirebaseAuth mAuth;
     private FirebaseDatabase database;
     private boolean isVaad;
@@ -136,7 +134,7 @@ public class Register extends AppCompatActivity {
 
     }
 
-    private void errorMessage(String errorMessage) {
+    public void errorMessage(String errorMessage) {
         error.setVisibility(View.VISIBLE);
         error.setTextColor(Color.RED);
         error.setText(errorMessage);
