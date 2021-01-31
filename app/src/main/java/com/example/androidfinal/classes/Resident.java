@@ -1,17 +1,15 @@
 package com.example.androidfinal.classes;
 
-import java.time.Month;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 
 public class Resident extends User {
     private int addressNumber;
-    private LinkedHashMap<String, Double> monthlyPayments;
+    private HashMap<String, Double> monthlyPayments;
 
     public Resident(String userName, String firstName, String surname, int id, int addressNumber) {
         super(userName, firstName, surname, id, "resident");
         this.addressNumber = addressNumber;
-        this.monthlyPayments = new LinkedHashMap<>();
+        this.monthlyPayments = new HashMap<>();
         for (String month : new String[]{"January", "Febuary", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"})
             this.monthlyPayments.put(month, 0.0);
     }
@@ -31,7 +29,7 @@ public class Resident extends User {
         return monthlyPayments;
     }
 
-    public void setMonthlyPayments(LinkedHashMap<String, Double> monthlyPayments) {
+    public void setMonthlyPayments(HashMap<String, Double> monthlyPayments) {
         this.monthlyPayments = monthlyPayments;
     }
 }

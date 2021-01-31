@@ -7,7 +7,7 @@
     tools:context=".fragments.ResidentPayments">
 
     <TableLayout
-        android:id="@+id/table"
+        android:id="@+id/vaadPaymentTable"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="100dp"

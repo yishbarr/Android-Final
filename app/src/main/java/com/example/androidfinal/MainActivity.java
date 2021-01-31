@@ -10,7 +10,9 @@ import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.viewpager.widget.ViewPager;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.content.res.Resources;
 import android.os.Build;
 import android.os.Bundle;
@@ -36,7 +38,6 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.Set;
 
 public class MainActivity extends AppCompatActivity {
@@ -114,6 +115,10 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 viewPager.setCurrentItem(tab.getPosition());
+                if (tab.getPosition() == 2)
+                    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+                else
+                    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
             }
 
             @Override
@@ -138,6 +143,7 @@ public class MainActivity extends AppCompatActivity {
 class ViewPagerAdapter extends FragmentStatePagerAdapter {
     private boolean isVaad;
     private int tabCount;
+    private Activity activity;
 
 
     public ViewPagerAdapter(@NonNull FragmentManager fm, int tabCount, boolean isVaad) {

@@ -1,6 +1,5 @@
 package com.example.androidfinal.fragments;
 
-import android.content.Context;
 import android.content.res.Resources;
 import android.os.Build;
 import android.os.Bundle;
@@ -14,7 +13,6 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -29,9 +27,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.time.Month;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
+import java.util.HashMap;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -40,7 +37,7 @@ import java.util.LinkedHashMap;
  */
 public class ResidentPayments extends Fragment {
 
-    private ArrayList<LinkedHashMap<String, Long>> allPayments = new ArrayList<>();
+    private ArrayList<HashMap<String, Long>> allPayments = new ArrayList<>();
     private FirebaseDatabase database;
     private DatabaseReference myRef;
     private FirebaseUser user;
@@ -110,22 +107,13 @@ public class ResidentPayments extends Fragment {
                 // whenever data at this location is updated.
 
                 //Get payment info from database.
-                if (MainActivity.isVaad()) {
-                    dataSnapshot.getChildren().forEach(user -> {
-                        LinkedHashMap<String, Long> payments = new LinkedHashMap<>();
-                        user.child("monthlyPayments").getChildren().forEach(month -> {
-                            payments.put(month.getKey(), month.getValue(Long.class));
-                        });
-                        allPayments.add(payments);
-                    });
-                } else {
-                    LinkedHashMap<String, Long> payments = new LinkedHashMap<>();
-                    dataSnapshot.child(user.getUid()).child("monthlyPayments").getChildren().forEach(month -> {
-                        payments.put(month.getKey(), month.getValue(Long.class));
-                    });
-                    allPayments.add(payments);
-                    addInfoToResidentPayments(allPayments);
-                }
+
+                HashMap<String, Long> payments = new HashMap<>();
+                dataSnapshot.child(user.getUid()).child("monthlyPayments").getChildren().forEach(month -> {
+                    payments.put(month.getKey(), month.getValue(Long.class));
+                });
+                addInfoToPayments(payments);
+
             }
 
             @Override
@@ -137,35 +125,90 @@ public class ResidentPayments extends Fragment {
 
     //Put payments in
     @RequiresApi(api = Build.VERSION_CODES.N)
-    public void addInfoToResidentPayments(ArrayList<LinkedHashMap<String, Long>> allPayments) {
+    public void addInfoToPayments(HashMap<String, Long> payments) {
         View view = this.getView();
-        TableLayout table = view.findViewById(R.id.table);
-        allPayments.forEach(paymentList -> {
-            paymentList.entrySet().stream().forEach(entry -> {
-                TableRow row = new TableRow(this.getContext());
-                TextView key = new TextView(this.getContext());
-                key.setText(entry.getKey());
-                key.setTextSize(24);
-                TextView value = new TextView(this.getContext());
-                value.setText(entry.getValue() + "");
-                value.setTextSize(24);
-                row.addView(key);
-                row.addView(value);
+        TableLayout table = view.findViewById(R.id.vaadPaymentTable);
+        TableRow[] items = new TableRow[12];
+        int dip = 30;
+        Resources r = getResources();
+        int px = (int) TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP,
+                dip,
+                r.getDisplayMetrics()
+        );
+        payments.entrySet().stream().forEach(entry -> {
+            TableRow row = new TableRow(this.getContext());
+            TextView key = new TextView(this.getContext());
+            key.setText(entry.getKey());
+            key.setTextSize(24);
+            TextView value = new TextView(this.getContext());
+            value.setText(entry.getValue() + "");
+            value.setTextSize(24);
+            row.addView(key);
+            row.addView(value);
 
-                int dip = 30;
-                Resources r = getResources();
-                int px = (int) TypedValue.applyDimension(
-                        TypedValue.COMPLEX_UNIT_DIP,
-                        dip,
-                        r.getDisplayMetrics()
-                );
-                ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) value.getLayoutParams();
-                params.setMargins(px, 0, 0, 0);
-                value.setLayoutParams(params);
 
-                table.addView(row);
-            });
+            ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) value.getLayoutParams();
+            params.setMargins(px, 0, 0, 0);
+            value.setLayoutParams(params);
+
+            switch (entry.getKey()) {
+                case "January":
+                    items[0] = row;
+                    break;
+                case "Febuary":
+                    items[1] = row;
+                    break;
+
+                case "March":
+                    items[2] = row;
+                    break;
+
+                case "April":
+                    items[3] = row;
+                    break;
+
+                case "May":
+                    items[4] = row;
+                    break;
+
+                case "June":
+                    items[5] = row;
+                    break;
+
+                case "July":
+                    items[6] = row;
+                    break;
+
+                case "August":
+                    items[7] = row;
+                    break;
+
+                case "September":
+                    items[8] = row;
+                    break;
+
+                case "October":
+                    items[9] = row;
+                    break;
+
+                case "November":
+                    items[10] = row;
+                    break;
+
+                case "December":
+                    items[11] = row;
+                    break;
+
+            }
         });
+
+        for (TableRow row : items) {
+            if (row.getParent() != null)
+                ((ViewGroup) row.getParent()).removeView(row);
+            table.addView(row);
+        }
+
     }
 }
 
