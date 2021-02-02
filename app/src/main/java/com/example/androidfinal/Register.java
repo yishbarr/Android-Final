@@ -44,7 +44,7 @@ public class Register extends AppCompatActivity implements Authentication {
         setContentView(R.layout.activity_register);
 
 
-        userArray=new HashMap<>();
+        userArray = new HashMap<>();
         //Firebase
         mAuth = FirebaseAuth.getInstance();
         //Database
@@ -177,8 +177,7 @@ public class Register extends AppCompatActivity implements Authentication {
             auth(username, password, firstName, surname, id, finalSeniority, finalAddressNumber, finalVaadEmail, vaadUid);
 
 
-        } catch (
-                NumberFormatException e) {
+        } catch (NumberFormatException e) {
             errorMessage("Please check validity of fields.");
         }
 

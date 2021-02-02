@@ -23,6 +23,7 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
+import com.example.androidfinal.fragments.IndividualPayments;
 import com.example.androidfinal.fragments.PasswordSet;
 import com.example.androidfinal.fragments.PaymentSummary;
 import com.example.androidfinal.fragments.ResidentPayments;
@@ -157,6 +158,11 @@ public class MainActivity extends AppCompatActivity {
         VaadPayments.ConfirmPayment(view);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    public void getPayments(View view) {
+        IndividualPayments.getPayments(view);
+    }
+
 }
 
 class ViewPagerAdapter extends FragmentStatePagerAdapter {
@@ -182,6 +188,8 @@ class ViewPagerAdapter extends FragmentStatePagerAdapter {
                     return new ResidentPayments();
             case 2:
                 return new PaymentSummary();
+            case 3:
+                return new IndividualPayments();
             default:
                 return new PasswordSet();
         }
@@ -205,6 +213,8 @@ class ViewPagerAdapter extends FragmentStatePagerAdapter {
                     return "Payments";
             case 2:
                 return "Payment Summary";
+            case 3:
+                return "Individual Payments";
         }
         return "";
     }

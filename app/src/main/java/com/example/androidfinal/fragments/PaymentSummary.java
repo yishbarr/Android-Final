@@ -146,6 +146,8 @@ public class PaymentSummary extends Fragment {
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     public void addInfoToPayments(HashMap<Long, HashMap<String, Long>> allPayments) {
+        while (table.getChildAt(1) != null)
+            table.removeViewAt(1);
         //Count sums for each month
         int[] sums = new int[12];
         for (int i = 0; i < sums.length; i++)
