@@ -1,5 +1,6 @@
 package com.example.androidfinal.fragments;
 
+import android.content.Context;
 import android.content.res.Resources;
 import android.os.Build;
 import android.os.Bundle;
@@ -38,6 +39,9 @@ public class PaymentSummary extends Fragment {
     private FirebaseDatabase database;
     private DatabaseReference myRef;
     private FirebaseUser user;
+    private TableLayout table;
+    private HashMap<Long, HashMap<String, Long>> allPayments;
+    private int px;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -47,6 +51,7 @@ public class PaymentSummary extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+    private Context context;
 
     public PaymentSummary() {
         // Required empty public constructor
@@ -89,13 +94,24 @@ public class PaymentSummary extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        TableLayout table = view.findViewById(R.id.vaadPaymentTable);
+
+        context = getContext();
+        //Convert dp to px
+        int dip = 10;
+        Resources r = getResources();
+        px = (int) TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP,
+                dip,
+                r.getDisplayMetrics()
+        );
+
+        table = view.findViewById(R.id.allPaymentTable);
 
         user = FirebaseAuth.getInstance().getCurrentUser();
         database = FirebaseDatabase.getInstance();
         myRef = database.getReference("users");
 
-        HashMap<Long, HashMap<String, Long>> allPayments = new HashMap<>();
+        allPayments = new HashMap<>();
         // Read from the database
         myRef.addValueEventListener(new ValueEventListener() {
             @RequiresApi(api = Build.VERSION_CODES.N)
@@ -104,9 +120,12 @@ public class PaymentSummary extends Fragment {
                 // This method is called once with the initial value and again
                 // whenever data at this location is updated.
 
+                Iterable<DataSnapshot> myUsersSnap = dataSnapshot.child(user.getUid()).child("residents").getChildren();
+                ArrayList<String> myUsers = new ArrayList<>();
+                myUsersSnap.forEach(user -> myUsers.add(user.getKey()));
                 //Get flat numbers
                 dataSnapshot.getChildren().forEach(user -> {
-                    if (user.child("userType").getValue(String.class).contentEquals("resident")) {
+                    if (myUsers.contains(user.getKey())) {
                         HashMap<String, Long> payments = new HashMap<>();
                         user.child("monthlyPayments").getChildren().forEach(month -> {
                             payments.put(month.getKey(), month.getValue(Long.class));
@@ -127,29 +146,17 @@ public class PaymentSummary extends Fragment {
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     public void addInfoToPayments(HashMap<Long, HashMap<String, Long>> allPayments) {
-        View view = this.getView();
-        TableLayout table = view.findViewById(R.id.allPaymentTable);
         //Count sums for each month
         int[] sums = new int[12];
         for (int i = 0; i < sums.length; i++)
             sums[i] = 0;
-
-        //Convert dp to px
-        int dip = 10;
-        Resources r = getResources();
-        int px = (int) TypedValue.applyDimension(
-                TypedValue.COMPLEX_UNIT_DIP,
-                dip,
-                r.getDisplayMetrics()
-        );
-
         //Sort by flat numbers
         ArrayList<TableRow> sorter = new ArrayList<>();
         allPayments.keySet().stream().forEach(topKey -> {
             TextView[] orderPayments = new TextView[13];
-            TableRow row = new TableRow(this.getContext());
+            TableRow row = new TableRow(context);
             allPayments.get(topKey).keySet().forEach(innerKey -> {
-                TextView value = new TextView(this.getContext());
+                TextView value = new TextView(context);
                 int num = Math.toIntExact(allPayments.get(topKey).get(innerKey));
                 value.setText(num + "");
 
@@ -215,7 +222,7 @@ public class PaymentSummary extends Fragment {
                 }
 
             });
-            TextView flatNum = new TextView(this.getContext());
+            TextView flatNum = new TextView(context);
 
             flatNum.setText(topKey + "");
             orderPayments[0] = flatNum;
@@ -243,13 +250,13 @@ public class PaymentSummary extends Fragment {
         }
 
         //Add sums to table
-        TableRow sumsRow = new TableRow(this.getContext());
+        TableRow sumsRow = new TableRow(context);
         TextView[] sumsRowTexts = new TextView[13];
-        TextView all = new TextView(this.getContext());
+        TextView all = new TextView(context);
         all.setText("Sums");
         sumsRowTexts[0] = all;
         for (int i = 0; i < sums.length; i++) {
-            TextView num = new TextView(this.getContext());
+            TextView num = new TextView(context);
             num.setText(sums[i] + "");
             sumsRowTexts[i + 1] = num;
         }

@@ -11,7 +11,7 @@
         android:id="@+id/errorMessage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="60dp"
+        android:layout_marginLeft="100dp"
         android:layout_marginTop="150dp"
         android:layout_marginRight="80dp"
         android:text="Please check validity of fields."
@@ -21,7 +21,7 @@
     <RadioGroup
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="60dp"
+        android:layout_marginLeft="100dp"
         android:layout_marginTop="10dp"
         android:orientation="horizontal">
 
@@ -45,7 +45,7 @@
         android:id="@+id/usernameNew"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="60dp"
+        android:layout_marginLeft="100dp"
         android:ems="10"
         android:hint="New Username"
         android:inputType="textEmailAddress"
@@ -56,7 +56,7 @@
         android:id="@+id/passwordNew"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="60dp"
+        android:layout_marginLeft="100dp"
         android:ems="10"
         android:hint="Password"
         android:inputType="textPassword" />
@@ -65,7 +65,7 @@
         android:id="@+id/firstName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="60dp"
+        android:layout_marginLeft="100dp"
         android:ems="10"
         android:hint="First Name"
         android:inputType="textPersonName" />
@@ -74,7 +74,7 @@
         android:id="@+id/surname"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="60dp"
+        android:layout_marginLeft="100dp"
         android:ems="10"
         android:hint="Surname"
         android:inputType="textPersonName" />
@@ -83,7 +83,7 @@
         android:id="@+id/id"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="60dp"
+        android:layout_marginLeft="100dp"
         android:ems="10"
         android:hint="ID"
         android:inputType="textPersonName" />
@@ -92,7 +92,7 @@
         android:id="@+id/seniority"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="60dp"
+        android:layout_marginLeft="100dp"
         android:ems="10"
         android:hint="Seniority in Years"
         android:inputType="textPersonName"
@@ -102,25 +102,28 @@
         android:id="@+id/flatNumber"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="60dp"
+        android:layout_marginLeft="100dp"
         android:ems="10"
         android:hint="Flat Number"
         android:inputType="textPersonName"
         android:visibility="gone" />
 
-    <LinearLayout
+    <EditText
+        android:id="@+id/vaadEmail"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:orientation="horizontal">
+        android:layout_marginLeft="100dp"
+        android:ems="10"
+        android:hint="Commitee Email"
+        android:inputType="textPersonName"
+        android:visibility="gone" />
 
-        <Button
-            android:id="@+id/register"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="60dp"
-            android:onClick="Register"
-            android:text="Register" />
-    </LinearLayout>
+    <Button
+        android:id="@+id/register"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="100dp"
+        android:onClick="Register"
+        android:text="Register" />
 
 </LinearLayout>

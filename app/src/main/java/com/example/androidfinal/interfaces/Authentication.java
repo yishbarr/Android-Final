@@ -5,5 +5,4 @@ import android.view.View;
 public interface Authentication {
     void errorMessage(String errorMessage);
 
-    void Register(View view);
 }

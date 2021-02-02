@@ -6,4 +6,18 @@
     <string name="tab_text_2">Tab 2</string>
     <string name="title_activity_landing">Landing</string>
     <string name="title_activity_pootis">pootis</string>
+    <string-array name="months">
+        <item>January</item>
+        <item>Febuary</item>
+        <item>March</item>
+        <item>April</item>
+        <item>May</item>
+        <item>June</item>
+        <item>July</item>
+        <item>August</item>
+        <item>September</item>
+        <item>October</item>
+        <item>November</item>
+        <item>December</item>
+    </string-array>
 </resources>

@@ -5,10 +5,52 @@
     android:layout_height="match_parent"
     tools:context=".fragments.VaadPayments">
 
-    <!-- TODO: Update blank fragment layout -->
+    <EditText
+        android:id="@+id/flatNumberChoice"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="100dp"
+        android:layout_marginTop="100dp"
+        android:ems="10"
+        android:hint="Flat Number"
+        android:inputType="textPersonName"
+        android:textAlignment="center" />
+
+    <EditText
+        android:id="@+id/costChoice"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="100dp"
+        android:layout_marginTop="150dp"
+        android:ems="10"
+        android:hint="Monthly Cost"
+        android:inputType="textPersonName"
+        android:textAlignment="center" />
+
+    <Spinner
+        android:id="@+id/monthChoice"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="150dp"
+        android:layout_marginTop="210dp" />
+
+    <Button
+        android:id="@+id/confirm"
+        android:layout_width="210dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="100dp"
+        android:layout_marginTop="260dp"
+        android:onClick="ConfirmPayment"
+        android:text="Confirm" />
+
     <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:id="@+id/paymentError"
+        android:layout_width="210dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="100dp"
+        android:layout_marginTop="320dp"
+        android:text="Invalid input. Make sure you used numbers only."
+        android:textColor="@android:color/holo_red_dark"
+        android:visibility="invisible" />
 
 </FrameLayout>

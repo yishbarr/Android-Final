@@ -1,5 +1,6 @@
 package com.example.androidfinal.fragments;
 
+import android.content.Context;
 import android.content.res.Resources;
 import android.os.Build;
 import android.os.Bundle;
@@ -41,6 +42,7 @@ public class ResidentPayments extends Fragment {
     private FirebaseDatabase database;
     private DatabaseReference myRef;
     private FirebaseUser user;
+    private int px;
 
 
     // TODO: Rename parameter arguments, choose names that match
@@ -51,6 +53,7 @@ public class ResidentPayments extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+    private Context context;
 
     public ResidentPayments() {
         // Required empty public constructor
@@ -95,6 +98,16 @@ public class ResidentPayments extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        context = getContext();
+        //Convert dp to px
+        int dip = 30;
+        Resources r = getResources();
+        px = (int) TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP,
+                dip,
+                r.getDisplayMetrics()
+        );
+
         user = FirebaseAuth.getInstance().getCurrentUser();
         database = FirebaseDatabase.getInstance();
         myRef = database.getReference("users");
@@ -129,19 +142,13 @@ public class ResidentPayments extends Fragment {
         View view = this.getView();
         TableLayout table = view.findViewById(R.id.vaadPaymentTable);
         TableRow[] items = new TableRow[12];
-        int dip = 30;
-        Resources r = getResources();
-        int px = (int) TypedValue.applyDimension(
-                TypedValue.COMPLEX_UNIT_DIP,
-                dip,
-                r.getDisplayMetrics()
-        );
+
         payments.entrySet().stream().forEach(entry -> {
-            TableRow row = new TableRow(this.getContext());
-            TextView key = new TextView(this.getContext());
+            TableRow row = new TableRow(context);
+            TextView key = new TextView(context);
             key.setText(entry.getKey());
             key.setTextSize(24);
-            TextView value = new TextView(this.getContext());
+            TextView value = new TextView(context);
             value.setText(entry.getValue() + "");
             value.setTextSize(24);
             row.addView(key);

@@ -41,7 +41,7 @@
             android:id="@+id/residentTabs"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:visibility="visible">
+            android:visibility="gone">
 
             <com.google.android.material.tabs.TabItem
                 android:id="@+id/passwordChange"
@@ -56,6 +56,7 @@
                 android:text="Payments" />
 
         </com.google.android.material.tabs.TabLayout>
+
     </androidx.viewpager.widget.ViewPager>
 
 </LinearLayout>

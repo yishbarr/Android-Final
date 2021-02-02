@@ -49,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
     private ViewPager viewPager;
     private static boolean isVaad;
     private FragmentStatePagerAdapter pagerAdapter;
+    private ValueEventListener listener;
 
     @Override
 
@@ -66,8 +67,7 @@ public class MainActivity extends AppCompatActivity {
         database = FirebaseDatabase.getInstance();
         myRef = database.getReference("users");
 
-        // Read from the database
-        myRef.addValueEventListener(new ValueEventListener() {
+        listener = new ValueEventListener() {
             @RequiresApi(api = Build.VERSION_CODES.N)
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -76,7 +76,8 @@ public class MainActivity extends AppCompatActivity {
                 String value = dataSnapshot.child(user.getUid()).child("userType").getValue(String.class);
                 if (value.contentEquals("vaad")) {
                     isVaad = true;
-                }
+                } else
+                    isVaad = false;
                 createTabs();
             }
 
@@ -84,13 +85,21 @@ public class MainActivity extends AppCompatActivity {
             public void onCancelled(DatabaseError error) {
                 // Failed to read value
             }
-        });
+        };
+        // Read from the database
+        myRef.addValueEventListener(listener);
 
 
     }
 
     public static boolean isVaad() {
         return isVaad;
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+
     }
 
     private void createTabs() {
@@ -100,8 +109,12 @@ public class MainActivity extends AppCompatActivity {
             tabs = findViewById(R.id.vaadTabs);
             tabs.setVisibility(View.VISIBLE);
             findViewById(R.id.residentTabs).setVisibility(View.GONE);
-        } else
+        } else {
             tabs = findViewById(R.id.residentTabs);
+            tabs.setVisibility(View.VISIBLE);
+            findViewById(R.id.vaadTabs).setVisibility(View.GONE);
+
+        }
 
         //Setup fragments
         viewPager = findViewById(R.id.fragmentFrame);
@@ -132,10 +145,16 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        myRef.removeEventListener(listener);
     }
 
     public void ChangePassword(View view) {
         PasswordSet.ChangePassword(view);
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    public void ConfirmPayment(View view) {
+        VaadPayments.ConfirmPayment(view);
     }
 
 }
@@ -156,8 +175,6 @@ class ViewPagerAdapter extends FragmentStatePagerAdapter {
     @Override
     public Fragment getItem(int position) {
         switch (position) {
-            case 0:
-                return new PasswordSet();
             case 1:
                 if (isVaad)
                     return new VaadPayments();
@@ -191,4 +208,5 @@ class ViewPagerAdapter extends FragmentStatePagerAdapter {
         }
         return "";
     }
+
 }
