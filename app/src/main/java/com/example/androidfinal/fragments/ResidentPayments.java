@@ -18,7 +18,6 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
-import com.example.androidfinal.MainActivity;
 import com.example.androidfinal.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -43,6 +42,7 @@ public class ResidentPayments extends Fragment {
     private DatabaseReference myRef;
     private FirebaseUser user;
     private int px;
+    private TableLayout table;
 
 
     // TODO: Rename parameter arguments, choose names that match
@@ -98,6 +98,7 @@ public class ResidentPayments extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        table = view.findViewById(R.id.vaadPaymentTable);
         context = getContext();
         //Convert dp to px
         int dip = 30;
@@ -139,8 +140,6 @@ public class ResidentPayments extends Fragment {
     //Put payments in
     @RequiresApi(api = Build.VERSION_CODES.N)
     public void addInfoToPayments(HashMap<String, Long> payments) {
-        View view = this.getView();
-        TableLayout table = view.findViewById(R.id.vaadPaymentTable);
 
         while (table.getChildAt(1) != null)
             table.removeViewAt(1);

@@ -1,7 +1,10 @@
 package com.example.androidfinal.classes;
 
+import java.util.HashMap;
+
 public class Vaad extends User {
     private int seniority;
+
 
     public Vaad(String userName, String firstName, String surname, int id, int seniority) {
         super(userName, firstName, surname, id, "vaad");
@@ -18,4 +21,6 @@ public class Vaad extends User {
     public void setSeniority(int seniority) {
         this.seniority = seniority;
     }
+
+
 }

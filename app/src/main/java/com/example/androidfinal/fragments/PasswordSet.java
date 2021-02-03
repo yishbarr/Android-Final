@@ -13,7 +13,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.androidfinal.R;
-import com.example.androidfinal.interfaces.Authentication;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -77,12 +76,15 @@ public class PasswordSet extends Fragment {
         return inflater.inflate(R.layout.fragment_password_set, container, false);
     }
 
+
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        user = FirebaseAuth.getInstance().getCurrentUser();
         message = view.findViewById(R.id.passwordChangedMessage);
         passwordText = view.findViewById(R.id.passwordSet);
     }
+
 
     private static void errorMessage(String errorMessage) {
         message.setVisibility(View.VISIBLE);
@@ -90,11 +92,10 @@ public class PasswordSet extends Fragment {
         message.setText(errorMessage);
     }
 
+
     public static void ChangePassword(View view) {
         try {
-            user = FirebaseAuth.getInstance().getCurrentUser();
             String password = passwordText.getText().toString();
-
             user.updatePassword(password)
                     .addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override

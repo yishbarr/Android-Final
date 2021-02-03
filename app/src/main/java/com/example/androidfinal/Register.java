@@ -26,9 +26,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
+import java.util.Set;
 
 
 public class Register extends AppCompatActivity implements Authentication {
@@ -37,6 +36,7 @@ public class Register extends AppCompatActivity implements Authentication {
     private boolean isVaad;
     private TextView error;
     private HashMap<String, User> userArray;
+    private HashMap<String, Iterable<DataSnapshot>> vaadArray;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +44,7 @@ public class Register extends AppCompatActivity implements Authentication {
         setContentView(R.layout.activity_register);
 
 
+        vaadArray = new HashMap<>();
         userArray = new HashMap<>();
         //Firebase
         mAuth = FirebaseAuth.getInstance();
@@ -61,8 +62,12 @@ public class Register extends AppCompatActivity implements Authentication {
                 for (DataSnapshot user : userArrayIterator) {
                     if (user.child("userType").getValue(String.class).contentEquals("resident"))
                         userArray.put(user.getKey(), user.getValue(Resident.class));
-                    else
+                    else {
                         userArray.put(user.getKey(), user.getValue(Vaad.class));
+                        Iterable<DataSnapshot> residents = user.child("residents").getChildren();
+                        if (residents != null)
+                            vaadArray.put(user.getKey(), residents);
+                    }
                 }
             }
 
@@ -142,29 +147,31 @@ public class Register extends AppCompatActivity implements Authentication {
 
             //Check if id taken
             String idTaken = "ID already taken.";
-            for (Map.Entry<String, User> mapEntry : userArray.entrySet()) {
-                User user = mapEntry.getValue();
-                String key = mapEntry.getKey();
+            Set<String> keys = userArray.keySet();
+            for (String key : keys) {
+                User user = userArray.get(key);
                 if (user.getId() == id) {
                     errorMessage(idTaken);
                     return;
                 }
                 if (!isVaad) {
-                    if (user.getUserType().contentEquals("resident")) {
-                        if (((Resident) user).getAddressNumber() == finalAddressNumber) {
-                            errorMessage("Flat number already registered.");
-                            return;
+                    if (user.getUserType().contentEquals("vaad")) {
+                        String email = user.getUserName();
+                        if (email.contentEquals(finalVaadEmail)) {
+                            emailExists = true;
+                            vaadUid = key;
+                            for (DataSnapshot flat : vaadArray.get(key)) {
+                                if (flat.getValue(Long.class).intValue() == finalAddressNumber) {
+                                    errorMessage("Flat number taken.");
+                                    return;
+                                }
+                            }
+                            break;
                         }
-                    }
-                    String email = user.getUserName();
-                    if (email.contentEquals(finalVaadEmail)) {
-                        emailExists = true;
-                        vaadUid = key;
-                        break;
                     }
                 }
             }
-            if (!emailExists) {
+            if (!emailExists && !isVaad) {
                 errorMessage("Committee email isn't registered");
                 return;
             }
@@ -177,7 +184,8 @@ public class Register extends AppCompatActivity implements Authentication {
             auth(username, password, firstName, surname, id, finalSeniority, finalAddressNumber, finalVaadEmail, vaadUid);
 
 
-        } catch (NumberFormatException e) {
+        } catch (
+                NumberFormatException e) {
             errorMessage("Please check validity of fields.");
         }
 
@@ -206,7 +214,7 @@ public class Register extends AppCompatActivity implements Authentication {
                                 myRef.child(user.getUid()).setValue(userObj);
                             } else {
                                 userObj = new Resident(username, firstName, surname, id, addressNumber, vaadEmail, vaadUid);
-                                myRef.child(vaadUid).child("residents").child(user.getUid()).setValue(user.getUid());
+                                myRef.child(vaadUid).child("residents").child(user.getUid()).setValue(((Resident) userObj).getAddressNumber());
                                 myRef.child(user.getUid()).setValue(userObj);
                             }
 

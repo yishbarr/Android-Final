@@ -51,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
     private static boolean isVaad;
     private FragmentStatePagerAdapter pagerAdapter;
     private ValueEventListener listener;
+    private FragmentTransaction transaction;
 
     @Override
 
@@ -60,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
 
         //Setup Initial fragment
         frags = getSupportFragmentManager();
-        FragmentTransaction transaction = frags.beginTransaction();
+        transaction = frags.beginTransaction();
         transaction.add(R.id.fragmentFrame, new PasswordSet()).commit();
 
         //Check if user is Vaad or Resident
@@ -97,6 +98,7 @@ public class MainActivity extends AppCompatActivity {
         return isVaad;
     }
 
+
     @Override
     public void onBackPressed() {
         super.onBackPressed();
@@ -129,15 +131,14 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 viewPager.setCurrentItem(tab.getPosition());
-                if (tab.getPosition() == 2)
+                /*if (tab.getPosition() == 2)
                     setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
                 else
-                    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+                    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);*/
             }
 
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {
-
             }
 
             @Override
@@ -145,6 +146,7 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+
 
         myRef.removeEventListener(listener);
     }
@@ -169,6 +171,7 @@ class ViewPagerAdapter extends FragmentStatePagerAdapter {
     private boolean isVaad;
     private int tabCount;
     private Activity activity;
+    private FragmentTransaction trans;
 
 
     public ViewPagerAdapter(@NonNull FragmentManager fm, int tabCount, boolean isVaad) {

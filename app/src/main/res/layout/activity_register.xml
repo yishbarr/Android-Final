@@ -47,7 +47,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="100dp"
         android:ems="10"
-        android:hint="New Username"
+        android:hint="New User Email"
         android:inputType="textEmailAddress"
         android:selectAllOnFocus="false"
         android:singleLine="false" />
